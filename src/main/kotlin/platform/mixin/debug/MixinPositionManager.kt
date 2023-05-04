@@ -66,7 +66,10 @@ class MixinPositionManager(private val debugProcess: DebugProcess) : MultiReques
 
             if (psiFile != null) {
                 // File found, return correct source file
-                return SourcePosition.createFromLine(psiFile, location.lineNumber() - 1)
+                val originalLine = location.lineNumber() - 1
+                val lineFromBytecode = DebuggerUtilsEx.bytecodeToSourceLine(psiFile, originalLine)
+                val line = if (lineFromBytecode > -1) lineFromBytecode else originalLine
+                return SourcePosition.createFromLine(psiFile, line)
             }
         } catch (ignored: AbsentInformationException) {
         }
